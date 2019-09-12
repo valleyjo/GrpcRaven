@@ -40,7 +40,7 @@ namespace GrpcRaven
                         {
                             this.Log($"Sending message {request.Key} with {request.Payload.ToStringUtf8()}");
                             var options = new CallOptions(cancellationToken: token, deadline: DateTime.UtcNow + TimeSpan.FromSeconds(1));
-                            RavenResponse response = await this.client.ConsumeAsync(request);
+                            RavenResponse response = await this.client.ConsumeAsync(request, options);
                             this.Log($"Recieved response: code='{response.Code}' detail='{response.Detail}'");
                         }
                     }
@@ -48,7 +48,6 @@ namespace GrpcRaven
                 catch (RpcException e)
                 {
                     this.Log($"RPC failed: {e}");
-                    throw;
                 }
             }
 

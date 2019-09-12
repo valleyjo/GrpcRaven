@@ -2,11 +2,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29306.81
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Contracts", "RouteGuide\Contracts.csproj", "{49954D9C-5F17-4662-96B2-73BE833DD81A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Contracts", "Contracts\Contracts.csproj", "{49954D9C-5F17-4662-96B2-73BE833DD81A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrpcRavenClient", "RouteGuideClient\GrpcRavenClient.csproj", "{D47BE663-4DE3-4206-B7A8-EA3FA066DADC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrpcRavenClient", "Client\GrpcRavenClient.csproj", "{D47BE663-4DE3-4206-B7A8-EA3FA066DADC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrpcRavenServer", "RouteGuideServer\GrpcRavenServer.csproj", "{4B7C7794-BE24-4477-ACE7-18259EB73D27}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrpcRavenServer", "Server\GrpcRavenServer.csproj", "{4B7C7794-BE24-4477-ACE7-18259EB73D27}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
