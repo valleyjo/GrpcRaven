@@ -11,8 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="..\protos\raven_consumer.proto" Link="protos\raven_consumer.proto" />
-    <Protobuf Include="..\protos\host_proxy.proto" Link="protos\host_proxy.proto" />
+    <Protobuf Include="..\protos\carrier_pigeon_bombing.proto" Link="protos\carrier_pigeon_bombing.proto" />
+    <Protobuf Include="..\protos\carrier_pigeon_delivery.proto" Link="protos\carrier_pigeon_delivery.proto" />
   </ItemGroup>
 
 </Project>

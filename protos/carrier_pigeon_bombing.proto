@@ -1,0 +1,20 @@
+syntax = "proto3";
+package Pigeon;
+
+option csharp_namespace = "Pigeon";
+
+service Bombing {
+    rpc FireMortar(MortarRequest) returns (MortarResponse) {}
+}
+
+message MortarRequest {
+    uint64 x = 1;
+    uint64 y = 2;
+    string securityKey = 3;
+    bytes payload = 5;
+}
+
+message MortarResponse {
+    int32 code = 1;
+    string detail = 2;
+}

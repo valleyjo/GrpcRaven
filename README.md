@@ -1,6 +1,7 @@
-# gRPC Basics: C# sample code
+# Pigeon
 
-The files in this folder are the samples used in [gRPC Basics: C#][],
-a detailed tutorial for using gRPC in C#.
+A fictitious message delivery service called pigeon.
 
-[gRPC Basics: C#]:https://grpc.io/docs/tutorials/basic/csharp.html
+Pigeon works by using gRPC to deliver messages from a client to a server. Really this is just a repository for me to play around with gRPC in .Net.
+
+Originally forked from the gRPC samples folder.

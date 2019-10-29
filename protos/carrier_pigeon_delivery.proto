@@ -1,0 +1,18 @@
+syntax = "proto3";
+package Pigeon;
+
+option csharp_namespace = "Pigeon";
+
+service Homing {
+    rpc QuickDelivery(CarrierPigeonMessage) returns (CarrierPigeonResponse) {}
+}
+
+message CarrierPigeonMessage {
+    int32 code = 1;
+    string body = 2;
+}
+
+message CarrierPigeonResponse {
+    int32 code = 1;
+    string detail = 2;
+}

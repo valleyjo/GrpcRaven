@@ -1,4 +1,4 @@
-namespace GrpcRaven
+namespace Pigeon
 {
     using System;
     using System.Collections.Generic;
@@ -11,36 +11,38 @@ namespace GrpcRaven
     {
         public class ClientImpl
         {
-            private readonly Consumer.ConsumerClient consumeClient;
-            private readonly HostProxy.HostProxyClient proxyClient;
+            private readonly Bombing.BombingClient bombingClient;
+            private readonly Homing.HomingClient homingClient;
 
             public ClientImpl(Channel channel)
             {
-                this.consumeClient = new Consumer.ConsumerClient(channel);
-                this.proxyClient = new HostProxy.HostProxyClient(channel);
+                this.bombingClient = new Bombing.BombingClient(channel);
+                this.homingClient = new Homing.HomingClient(channel);
             }
 
-            public async Task<RavenResponse> ConsumeOne(CancellationToken token)
+            public async Task<MortarResponse> ConsumeOne(CancellationToken token)
             {
-                var req = new RavenMessageProto()
+                var req = new MortarRequest()
                 {
-                    Key = Guid.NewGuid().ToString(),
+                    X = 45,
+                    Y = 50,
+                    SecurityKey = Guid.NewGuid().ToString(),
                     Payload = ByteString.CopyFromUtf8("Smudgie the cat"),
                 };
 
                 var options = new CallOptions(cancellationToken: token);
-                return await this.consumeClient.ConsumeAsync(req, options);
+                return await this.bombingClient.FireMortarAsync(req, options);
             }
 
-            public async Task<GoalStateResponse> UpdateGoalStateAsync(CancellationToken token) {
-                var req = new GoalStateRequest() { Code = 0, Body = Guid.NewGuid().ToString(), };
+            public async Task<CarrierPigeonResponse> QuickDeliveryAsync(CancellationToken token) {
+                var req = new CarrierPigeonMessage() { Code = 0, Body = Guid.NewGuid().ToString(), };
                 var options = new CallOptions(cancellationToken: token);
-                return await this.proxyClient.UpdateGoalStateAsync(req, options);
+                return await this.homingClient.QuickDeliveryAsync(req, options);
             }
 
             public async Task<string> ConsumeTwoAsync(CancellationToken token) {
-                RavenResponse r1 = await this.ConsumeOne(token);
-                RavenResponse r2 = await this.ConsumeOne(token);
+                CarrierPigeonResponse r1 = await this.QuickDeliveryAsync(token);
+                CarrierPigeonResponse r2 = await this.QuickDeliveryAsync(token);
                 // does not handle falted tasks
                 // return a string so it's easy rather than a tuple or custom object
                 return
@@ -56,12 +58,12 @@ namespace GrpcRaven
                 {
                     while (!token.IsCancellationRequested)
                     {
-                        foreach (RavenMessageProto request in this.GenerateEndpointRequests(token))
+                        foreach (MortarRequest request in this.GenerateMortarRequest(token))
                         {
-                            this.Log($"Sending message {request.Key} with {request.Payload.ToStringUtf8()}");
+                            this.Log($"Sending message {request.SecurityKey} with {request.Payload.ToStringUtf8()}");
                             var options = new CallOptions(cancellationToken: token);
-                            RavenResponse response = await this.consumeClient.ConsumeAsync(request, options);
-                            this.Log($"Recieved response: code='{response.Code}' detail='{response.Detail}'");
+                            MortarResponse response = await this.bombingClient.FireMortarAsync(request, options);
+                            this.Log(FormatResponse(response));
                         }
                     }
                 }
@@ -71,25 +73,19 @@ namespace GrpcRaven
                 }
             }
 
-            private string FormatResponse(RavenResponse resp) =>
-                FormatResponse(resp.GetType().Name, resp.Code.ToString(), resp.Detail);
-
-            private string FormatResponse(GoalStateResponse resp) =>
-                FormatResponse(resp.GetType().Name, resp.Code.ToString(), resp.Detail);
-
-            private string FormatResponse(string type, string code, string detail) =>
-                $"{type}: [code='{code}' detail='{detail}']";
-
-            private IEnumerable<RavenMessageProto> GenerateEndpointRequests(CancellationToken token)
+            private IEnumerable<MortarRequest> GenerateMortarRequest(CancellationToken token)
             {
+                var rand = new Random();
                 while (!token.IsCancellationRequested)
                 {
                     Task.Delay(1000, token).Wait();
 
-                    yield return new RavenMessageProto()
+                    yield return new MortarRequest()
                     {
-                        Key = Guid.NewGuid().ToString(),
-                        Payload = ByteString.CopyFromUtf8("Smudgie the cat says meow"),
+                        X = (ulong)rand.Next(100),
+                        Y = (ulong)rand.Next(100),
+                        SecurityKey = Guid.NewGuid().ToString(),
+                        Payload = ByteString.CopyFromUtf8("Smudgie the cat says fire the mortar."),
                     };
                 }
             }
@@ -152,7 +148,7 @@ namespace GrpcRaven
             Console.Write($"Starting {nameof(ConsumeOneAsync)} scenario");
             var channel = new Channel("localhost", 10000, ChannelCredentials.Insecure);
             var client = new ClientImpl(channel);
-            RavenResponse r = await client.ConsumeOne(token);
+            MortarResponse r = await client.ConsumeOne(token);
             Console.WriteLine($"Recieved response: code='{r.Code}' detail='{r.Detail}'");
         }
 
@@ -163,5 +159,15 @@ namespace GrpcRaven
             var client = new ClientImpl(channel);
             Console.WriteLine(await client.ConsumeTwoAsync(token));
         }
+
+        private static string FormatResponse(CarrierPigeonResponse resp) =>
+            FormatResponse(resp.GetType().Name, resp.Code.ToString(), resp.Detail);
+
+        private static string FormatResponse(MortarResponse resp) =>
+            FormatResponse(resp.GetType().Name, resp.Code.ToString(), resp.Detail);
+
+        private static string FormatResponse(string type, string code, string detail) =>
+            $"{type}: [code='{code}' detail='{detail}']";
+
     }
 }

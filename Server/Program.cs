@@ -1,4 +1,4 @@
-namespace GrpcRaven
+namespace Pigeon
 {
     using System;
     using Grpc.Core;
@@ -14,8 +14,8 @@ namespace GrpcRaven
             { 
                 Services =
                 { 
-                    Consumer.BindService(new RavenConsumerImpl()),
-                    HostProxy.BindService(new HostProxyImpl()),
+                    Bombing.BindService(new PigeonConsumerImpl()),
+                    Homing.BindService(new HomingImpl()),
                 },
             };
 
