@@ -1,9 +1,9 @@
 syntax = "proto3";
-package RavenConsumer;
+package Raven;
 
-option csharp_namespace = "Microsoft.Azure.Compute.Raven.Mvp";
+option csharp_namespace = "GrpcRaven";
 
-service RavenConsumer {
+service Consumer {
     rpc Consume(RavenMessageProto) returns (RavenResponse) {}
 }
 

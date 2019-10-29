@@ -1,0 +1,18 @@
+syntax = "proto3";
+package Raven;
+
+option csharp_namespace = "GrpcRaven";
+
+service HostProxy {
+    rpc UpdateGoalState(GoalStateRequest) returns (GoalStateResponse) {}
+}
+
+message GoalStateRequest {
+    int32 code = 1;
+    string body = 2;
+}
+
+message GoalStateResponse {
+    int32 code = 1;
+    string detail = 2;
+}

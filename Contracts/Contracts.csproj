@@ -5,14 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.6.1" />
-    <PackageReference Include="Grpc" Version="1.17.0" />
-    <PackageReference Include="Grpc.Tools" Version="1.17.0" PrivateAssets="All" />
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="Google.Protobuf" Version="3.10.0" />
+    <PackageReference Include="Grpc" Version="2.24.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.24.0" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
     <Protobuf Include="..\protos\raven_consumer.proto" Link="protos\raven_consumer.proto" />
+    <Protobuf Include="..\protos\host_proxy.proto" Link="protos\host_proxy.proto" />
   </ItemGroup>
 
 </Project>

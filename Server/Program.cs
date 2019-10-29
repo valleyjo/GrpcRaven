@@ -1,33 +1,36 @@
 namespace GrpcRaven
 {
-    using Grpc.Core;
-    using Microsoft.Azure.Compute.Raven.Mvp;
     using System;
+    using Grpc.Core;
 
     class Program
     {
         static void Main()
         {
             const int Start = 10000;
-            const int End = 10100;
+            const int End = 10010;
 
-            var server = new Server
-            {
-                Services = { RavenConsumer.BindService(new RavenConsumerImpl()) },
+            var ravenServer = new Server
+            { 
+                Services =
+                { 
+                    Consumer.BindService(new RavenConsumerImpl()),
+                    HostProxy.BindService(new HostProxyImpl()),
+                },
             };
 
             for (int port = Start; port < End; port++)
             {
-                server.Ports.Add(new ServerPort("localhost", port, ServerCredentials.Insecure));
+                ravenServer.Ports.Add(new ServerPort("localhost", port, ServerCredentials.Insecure));
+                Console.WriteLine($"GrpcRaven server listening on port {port}");
             }
 
-            server.Start();
+            ravenServer.Start();
 
-            Console.WriteLine($"GrpcRavem server listening on port {Start}");
             Console.WriteLine("Press any key to stop the server...");
             Console.ReadKey();
 
-            server.ShutdownAsync().Wait();
+            ravenServer.ShutdownAsync().Wait();
         }
     }
 }
