@@ -4,17 +4,25 @@ package Pigeon;
 option csharp_namespace = "Pigeon";
 
 service Bombing {
-    rpc FireMortar(MortarRequest) returns (MortarResponse) {}
+    rpc SupportRequest(BombRequest) returns (BombResponse) {}
 }
 
-message MortarRequest {
+message BombRequest {
     uint64 x = 1;
     uint64 y = 2;
     string securityKey = 3;
+    BombCode bombCode = 4;
     bytes payload = 5;
 }
 
-message MortarResponse {
+enum BombCode {
+    UNKNOWN = 0;
+    MORTAR = 1;
+    AIRSTRIKE = 2;
+    SHELLING = 3;
+}
+
+message BombResponse {
     int32 code = 1;
     string detail = 2;
 }

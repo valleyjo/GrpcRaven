@@ -20,9 +20,9 @@ namespace Pigeon
                 this.homingClient = new Homing.HomingClient(channel);
             }
 
-            public async Task<MortarResponse> ConsumeOne(CancellationToken token)
+            public async Task<BombResponse> ConsumeOne(CancellationToken token)
             {
-                var req = new MortarRequest()
+                var req = new BombRequest()
                 {
                     X = 45,
                     Y = 50,
@@ -31,7 +31,7 @@ namespace Pigeon
                 };
 
                 var options = new CallOptions(cancellationToken: token);
-                return await this.bombingClient.FireMortarAsync(req, options);
+                return await this.bombingClient.SupportRequestAsync(req, options);
             }
 
             public async Task<CarrierPigeonResponse> QuickDeliveryAsync(CancellationToken token) {
@@ -58,11 +58,11 @@ namespace Pigeon
                 {
                     while (!token.IsCancellationRequested)
                     {
-                        foreach (MortarRequest request in this.GenerateMortarRequest(token))
+                        foreach (BombRequest request in this.GenerateMortarRequest(token))
                         {
                             this.Log($"Sending message {request.SecurityKey} with {request.Payload.ToStringUtf8()}");
                             var options = new CallOptions(cancellationToken: token);
-                            MortarResponse response = await this.bombingClient.FireMortarAsync(request, options);
+                            BombResponse response = await this.bombingClient.SupportRequestAsync(request, options);
                             this.Log(FormatResponse(response));
                         }
                     }
@@ -73,18 +73,19 @@ namespace Pigeon
                 }
             }
 
-            private IEnumerable<MortarRequest> GenerateMortarRequest(CancellationToken token)
+            private IEnumerable<BombRequest> GenerateMortarRequest(CancellationToken token)
             {
                 var rand = new Random();
                 while (!token.IsCancellationRequested)
                 {
                     Task.Delay(1000, token).Wait();
 
-                    yield return new MortarRequest()
+                    yield return new BombRequest()
                     {
                         X = (ulong)rand.Next(100),
                         Y = (ulong)rand.Next(100),
                         SecurityKey = Guid.NewGuid().ToString(),
+                        BombCode = BombCode.Mortar,
                         Payload = ByteString.CopyFromUtf8("Smudgie the cat says fire the mortar."),
                     };
                 }
@@ -96,7 +97,7 @@ namespace Pigeon
             }
         }
 
-        static void Main()
+        static void Main(string[] args)
         {
             using (var cts = new CancellationTokenSource())
             {
@@ -148,7 +149,7 @@ namespace Pigeon
             Console.Write($"Starting {nameof(ConsumeOneAsync)} scenario");
             var channel = new Channel("localhost", 10000, ChannelCredentials.Insecure);
             var client = new ClientImpl(channel);
-            MortarResponse r = await client.ConsumeOne(token);
+            BombResponse r = await client.ConsumeOne(token);
             Console.WriteLine($"Recieved response: code='{r.Code}' detail='{r.Detail}'");
         }
 
@@ -163,7 +164,7 @@ namespace Pigeon
         private static string FormatResponse(CarrierPigeonResponse resp) =>
             FormatResponse(resp.GetType().Name, resp.Code.ToString(), resp.Detail);
 
-        private static string FormatResponse(MortarResponse resp) =>
+        private static string FormatResponse(BombResponse resp) =>
             FormatResponse(resp.GetType().Name, resp.Code.ToString(), resp.Detail);
 
         private static string FormatResponse(string type, string code, string detail) =>
